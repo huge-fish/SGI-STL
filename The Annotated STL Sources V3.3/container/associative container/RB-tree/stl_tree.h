@@ -224,10 +224,10 @@ inline _Value* value_type(const _Rb_tree_iterator<_Value, _Ref, _Ptr>&) {
 inline void 
 _Rb_tree_rotate_left(_Rb_tree_node_base* __x, _Rb_tree_node_base*& __root)
 {
-  _Rb_tree_node_base* __y = __x->_M_right;
-  __x->_M_right = __y->_M_left;
+	_Rb_tree_node_base* __y = __x->_M_right; //y为旋转点的右子节点
+	__x->_M_right = __y->_M_left;//y  左变x的右
   if (__y->_M_left !=0)
-    __y->_M_left->_M_parent = __x;
+    __y->_M_left->_M_parent = __x;//设置 y左的父亲为x
   __y->_M_parent = __x->_M_parent;
 
   if (__x == __root)
@@ -264,46 +264,46 @@ _Rb_tree_rotate_right(_Rb_tree_node_base* __x, _Rb_tree_node_base*& __root)
 inline void 
 _Rb_tree_rebalance(_Rb_tree_node_base* __x, _Rb_tree_node_base*& __root)
 {
-  __x->_M_color = _S_rb_tree_red;
-  while (__x != __root && __x->_M_parent->_M_color == _S_rb_tree_red) {
-    if (__x->_M_parent == __x->_M_parent->_M_parent->_M_left) {
-      _Rb_tree_node_base* __y = __x->_M_parent->_M_parent->_M_right;
-      if (__y && __y->_M_color == _S_rb_tree_red) {
-        __x->_M_parent->_M_color = _S_rb_tree_black;
+  __x->_M_color = _S_rb_tree_red; //新节点为红色
+  while (__x != __root && __x->_M_parent->_M_color == _S_rb_tree_red) { //非根节点父节点为红
+    if (__x->_M_parent == __x->_M_parent->_M_parent->_M_left) { //找伯父节点
+      _Rb_tree_node_base* __y = __x->_M_parent->_M_parent->_M_right;  //y为伯父节点
+      if (__y && __y->_M_color == _S_rb_tree_red) { //y为红
+        __x->_M_parent->_M_color = _S_rb_tree_black; 
         __y->_M_color = _S_rb_tree_black;
         __x->_M_parent->_M_parent->_M_color = _S_rb_tree_red;
-        __x = __x->_M_parent->_M_parent;
+        __x = __x->_M_parent->_M_parent; //对应书上调整祖父节点子节点均为红，把祖父节点调红，父辈全黑
       }
-      else {
-        if (__x == __x->_M_parent->_M_right) {
+      else { // 伯父为空or为黑
+        if (__x == __x->_M_parent->_M_right) { /*新节点为右节点*/
           __x = __x->_M_parent;
-          _Rb_tree_rotate_left(__x, __root);
+          _Rb_tree_rotate_left(__x, __root); // 第一参数为左旋点 左旋
         }
         __x->_M_parent->_M_color = _S_rb_tree_black;
         __x->_M_parent->_M_parent->_M_color = _S_rb_tree_red;
-        _Rb_tree_rotate_right(__x->_M_parent->_M_parent, __root);
+        _Rb_tree_rotate_right(__x->_M_parent->_M_parent, __root); //书中情况一 伯父黑 外侧 父祖父置色 右旋
       }
     }
     else {
-      _Rb_tree_node_base* __y = __x->_M_parent->_M_parent->_M_left;
-      if (__y && __y->_M_color == _S_rb_tree_red) {
+		_Rb_tree_node_base* __y = __x->_M_parent->_M_parent->_M_left;   // 伯父节点为一个左节点
+      if (__y && __y->_M_color == _S_rb_tree_red) {//伯父存在且为红
         __x->_M_parent->_M_color = _S_rb_tree_black;
         __y->_M_color = _S_rb_tree_black;
         __x->_M_parent->_M_parent->_M_color = _S_rb_tree_red;
-        __x = __x->_M_parent->_M_parent;
+        __x = __x->_M_parent->_M_parent;//对应书上调整祖父节点子节点均为红，把祖父节点调红，父辈全黑 然后继续上层检查
       }
-      else {
+      else {//伯父为空or为黑
         if (__x == __x->_M_parent->_M_left) {
           __x = __x->_M_parent;
-          _Rb_tree_rotate_right(__x, __root);
+          _Rb_tree_rotate_right(__x, __root);//内侧插入
         }
         __x->_M_parent->_M_color = _S_rb_tree_black;
         __x->_M_parent->_M_parent->_M_color = _S_rb_tree_red;
-        _Rb_tree_rotate_left(__x->_M_parent->_M_parent, __root);
+        _Rb_tree_rotate_left(__x->_M_parent->_M_parent, __root);//如不运行if单纯外侧插入
       }
     }
   }
-  __root->_M_color = _S_rb_tree_black;
+  __root->_M_color = _S_rb_tree_black;//调整根节点颜色
 }
 
 // 删除一个节点后调整
